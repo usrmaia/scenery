@@ -1,0 +1,13 @@
+Modelo              Qtd. de faces
+
+bunny.obj           69666
+cilindro.obj        128
+cone.obj            64
+cubo.obj            12
+dragon.obj          24669
+esfera.obj          320
+fertility.obj       24908
+hand.obj            40000
+icosaedro.obj       20
+max_plank.obj       98260
+torus.obj           1250
