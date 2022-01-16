@@ -183,7 +183,7 @@ void OBJ::getOBJ(){
             vec3 color = PhongLighting(point, normal);
             glColor3f(color.r, color.g, color.b);
         }else{
-            glColor3f(this->amb.r, this->amb.g, this->amb.b);
+            glColor3f(this->amb.r * this->light_intensity.r, this->amb.g * this->light_intensity.g, this->amb.b * this->light_intensity.b);
         }
 
         glVertex3f(vertexs[v1].x, vertexs[v1].y, vertexs[v1].z);
@@ -197,7 +197,7 @@ void OBJ::getOBJ(){
             vec3 color = PhongLighting(point, normal);
             glColor3f(color.r, color.g, color.b);
         }else{
-            glColor3f(this->amb.r, this->amb.g, this->amb.b);
+            glColor3f(this->amb.r * this->light_intensity.r, this->amb.g * this->light_intensity.g, this->amb.b * this->light_intensity.b);
         }
 
         glVertex3f(vertexs[v2].x, vertexs[v2].y, vertexs[v2].z);
@@ -211,7 +211,7 @@ void OBJ::getOBJ(){
             vec3 color = PhongLighting(point, normal);
             glColor3f(color.r, color.g, color.b);
         }else{
-            glColor3f(this->amb.r, this->amb.g, this->amb.b);
+            glColor3f(this->amb.r * this->light_intensity.r, this->amb.g * this->light_intensity.g, this->amb.b * this->light_intensity.b);
         }
 
         glVertex3f(vertexs[v3].x, vertexs[v3].y, vertexs[v3].z);  
