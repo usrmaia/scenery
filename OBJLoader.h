@@ -8,14 +8,15 @@
 using namespace glm;
 
 struct face{
-    unsigned index;
-    int vertex[4];
-    face(int a, int b, int c, int d, int e){
-        vertex[0] = a;
-        vertex[1] = b;
-        vertex[2] = c;
-        vertex[3] = d;
-        index = e;
+    int vertex[3];
+    int normal[3];
+    face(int v1, int v2, int v3, int n1, int n2, int n3){
+        vertex[0] = v1;
+        vertex[1] = v2;
+        vertex[2] = v3;
+        normal[0] = n1;
+        normal[1] = n2;
+        normal[2] = n3;
     }
 };
 
@@ -45,7 +46,7 @@ class OBJ{
         vec3 getVertex(std::string s);
         vec3 getNormal(std::string s);
         face getFace(std::string s);
-        void load(unsigned &id, const char *file_path);
+        void load(const char *file_path);
 
-        void getOBJ(unsigned &id);
+        void getOBJ();
 };

@@ -38,11 +38,11 @@ void OBJ::setEyePosition(vec3 eye_position){
 bool OBJ::spotLight(vec3 light_position, vec3 light_direction, vec3 point){
     vec3 dist_lp_p = light_position - point;
     vec3 l = (dist_lp_p)/sqrt(dist_lp_p.x*dist_lp_p.x + dist_lp_p.y*dist_lp_p.y + dist_lp_p.z*dist_lp_p.z);
-    vec3 dist_ld_p = light_direction - point;
-    vec3 d = (dist_ld_p)/sqrt(dist_ld_p.x*dist_ld_p.x + dist_ld_p.y*dist_ld_p.y + dist_ld_p.z*dist_ld_p.z);
+    vec3 dist_p_lp = point - light_direction;
+    vec3 d = (dist_p_lp)/sqrt(dist_p_lp.x*dist_p_lp.x + dist_p_lp.y*dist_p_lp.y + dist_p_lp.z*dist_p_lp.z);
 
     float scalar_l_d = dot(l, d);
-    float angle = cos(90);
+    float angle = cos(45);
 
     //printf("%f < %f\n", scalar_l_d, angle);
 
@@ -62,7 +62,7 @@ bool OBJ::spotLight(vec3 light_position, vec3 light_direction, vec3 point){
 }
 
 vec3 OBJ::calculateLightAmb(){
-    vec3 ia = vec3(1, 1, 1); //iluminação ambiente
+    vec3 ia = this->light_intensity; //iluminação ambiente
     return this->amb * ia;
 }
 
@@ -131,16 +131,14 @@ vec3 OBJ::getNormal(std::string s){
 }
 
 face OBJ::getFace(std::string s){
-    int v1, v2, v3, v4, f;
-    //sscanf(s.c_str(), "f %d//%d %d//%d %d//%d ", &v1, &f, &v2, &f, &v3, &f, &v4, &f);
-    //face result(v1, v2, v3, v4, f);
-    sscanf(s.c_str(), "f %d//%d %d//%d %d//%d", &v1, &f, &v2, &f, &v3, &f);
-    face result(v1, v2, v3, 0, f);
+    int v1, v2, v3, n1, n2, n3;
+    sscanf(s.c_str(), "f %d//%d %d//%d %d//%d", &v1, &n1, &v2, &n2, &v3, &n3);
+    face result(v1, v2, v3, n1, n2, n3);
 
     return result;
 }
 
-void OBJ::load(unsigned &id, const char *file_path){
+void OBJ::load(const char *file_path){
     std::fstream arq(file_path);
     std::string line = "";
 
@@ -166,52 +164,57 @@ void OBJ::load(unsigned &id, const char *file_path){
     std::cout<<"Total faces: "<<faces.size()<<"\n"; */
 }
 
-void OBJ::getOBJ(unsigned &id){
-    //id = glGenLists(1);
-    
-    /* glNewList(id, GL_COMPILE_AND_EXECUTE);
-    glPolygonMode(GL_FRONT, GL_FILL); */
-
-    unsigned index;
-    int v1, v2, v3, v4;
+void OBJ::getOBJ(){
+    int v1, v2, v3, n1, n2, n3;
 
     glBegin(GL_TRIANGLES);
     for(int i = 0; i < faces.size(); i++){
-        index = faces[i].index - 1;
         v1 = faces[i].vertex[0] - 1;
         v2 = faces[i].vertex[1] - 1;
         v3 = faces[i].vertex[2] - 1;
-
-        vec3 normal = normals[index];
+        n1 = faces[i].normal[0] - 1;
+        n2 = faces[i].normal[1] - 1;
+        n3 = faces[i].normal[2] - 1;
+        //printf("vertex %d %d %d normal %d %d %d \n", v1, v2, v3, n1, n2, n3);
         vec3 point = vec3(vertexs[v1].x, vertexs[v1].y, vertexs[v1].z);
+        vec3 normal = vec3(normals[n1].x, normals[n1].y, normals[n1].z);
 
-        vec3 color = PhongLighting(point, normal);
-        glColor3f(color.r, color.g, color.b);
-        glVertex3f(vertexs[v1].x, vertexs[v1].y, vertexs[v1].z);
-
-        point = vec3(vertexs[v2].x, vertexs[v2].y, vertexs[v2].z);
-        color = PhongLighting(point, normal);
-        glColor3f(color.r, color.g, color.b);
-        glVertex3f(vertexs[v2].x, vertexs[v2].y, vertexs[v2].z);
-        
-        point = vec3(vertexs[v3].x, vertexs[v3].y, vertexs[v3].z);
-        color = PhongLighting(point, normal);
-        glColor3f(color.r, color.g, color.b);
-        glVertex3f(vertexs[v3].x, vertexs[v3].y, vertexs[v3].z);
-
-        //v4 = faces[i].vertex[3] - 1;
-
-        //glNormal3fv(&normals[index].x);
-
-        /* if(spotLight(this->light_position, this->light_direction, point)){
+        if(spotLight(this->light_position, this->light_direction, point)){
+            vec3 color = PhongLighting(point, normal);
             glColor3f(color.r, color.g, color.b);
         }else{
             glColor3f(this->amb.r, this->amb.g, this->amb.b);
-        } */
-            
-        //glVertex3f(vertexs[v4].x, vertexs[v4].y, vertexs[v4].z);
-        //printf("%f %f %f\n", vertexs[v4].x, vertexs[v4].y, vertexs[v4].z);
-        
+        }
+
+        glVertex3f(vertexs[v1].x, vertexs[v1].y, vertexs[v1].z);
+
+
+
+        point = vec3(vertexs[v2].x, vertexs[v2].y, vertexs[v2].z);
+        normal = vec3(normals[n2].x, normals[n2].y, normals[n2].z);
+
+        if(spotLight(this->light_position, this->light_direction, point)){
+            vec3 color = PhongLighting(point, normal);
+            glColor3f(color.r, color.g, color.b);
+        }else{
+            glColor3f(this->amb.r, this->amb.g, this->amb.b);
+        }
+
+        glVertex3f(vertexs[v2].x, vertexs[v2].y, vertexs[v2].z);
+
+
+
+        point = vec3(vertexs[v3].x, vertexs[v3].y, vertexs[v3].z);
+        normal = vec3(normals[n3].x, normals[n3].y, normals[n3].z);
+
+        if(spotLight(this->light_position, this->light_direction, point)){
+            vec3 color = PhongLighting(point, normal);
+            glColor3f(color.r, color.g, color.b);
+        }else{
+            glColor3f(this->amb.r, this->amb.g, this->amb.b);
+        }
+
+        glVertex3f(vertexs[v3].x, vertexs[v3].y, vertexs[v3].z);  
     }
     glEnd();
 

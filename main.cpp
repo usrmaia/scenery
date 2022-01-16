@@ -16,9 +16,6 @@ using namespace glm;
 
 OBJ fertility, dragon;
 
-static unsigned id_cube;
-static unsigned id_cylinder;
-
 GLdouble left, right, bottom, top, near_val, far_val;
 GLdouble    eyeX, eyeY, eyeZ, //posicao da camera
             centerX, centerY, centerZ, //para onde olha
@@ -38,7 +35,7 @@ void objects();
 int main(int argc, char **argv){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_SINGLE | GLUT_RGBA);
-    glutInitWindowPosition(100, 100);                          
+    glutInitWindowPosition(850, 200);                          
     glutInitWindowSize(500, 500);
     glutCreateWindow("Scenery");
 
@@ -50,7 +47,7 @@ int main(int argc, char **argv){
     //glutMouseFunc(mouse_func);
     //glutMotionFunc(motion_func);
     //glutReshapeFunc(reshape_func);
-    glutIdleFunc(idle_func);
+    //glutIdleFunc(idle_func);
 
     glutMainLoop();
 }
@@ -66,8 +63,8 @@ void init(){
     const GLfloat position[4] = {10, 10, 10, 1};
     glLightfv (GL_LIGHT0, GL_POSITION, position); */
 
-    fertility.load(id_cube, "Modelos3D/Modelos/fertility.obj");
-    dragon.load(id_cube, "Modelos3D/Modelos/dragon.obj");
+    fertility.load("Modelos3D/Modelos/fertility.obj");
+    dragon.load("Modelos3D/Modelos/dragon.obj");
 
     left = -1, right = 1, bottom = -1, top = 1, near_val = 2, far_val = 200;
     
@@ -219,15 +216,16 @@ void objects(){
         glScalef(2, 2, 2);
         glRotated(angle_obj, 0, 1, 0);
 
-        fertility.setObjectAmb(vec3(0, 0, 0));
-        fertility.setObjectDiff(vec3(0.7, 0, 0.7));
-        fertility.setObjectSpecular(vec4(0.5, 0, 0.5, 14));
+        fertility.setObjectAmb(vec3(0, 0.1, 0.1));
+        fertility.setObjectDiff(vec3(0, 0.4, 0.4));
+        fertility.setObjectSpecular(vec4(0, 0.5, 0.5, 14));
 
-        fertility.setLightIntensity(vec3(1, 1, 1));
-        fertility.setLightPosition(vec3(10, 10, 0));
+        fertility.setLightIntensity(vec3(0, 0, 1));
+        fertility.setLightPosition(vec3(10, 10, 10));
+        fertility.setLightDirection(vec3(3, 2, 0));
         fertility.setEyePosition(vec3(eyeX, eyeY, eyeZ));
 
-        fertility.getOBJ(id_cube);
+        fertility.getOBJ();
         //glCallList(id_cube);
     glPopMatrix();
 
@@ -236,15 +234,16 @@ void objects(){
         glScalef(2, 2, 2);
         glRotated(angle_obj, 0, 1, 0);
 
-        dragon.setObjectAmb(vec3(0, 0, 0));
-        dragon.setObjectDiff(vec3(0.5, 0, 0));
-        dragon.setObjectSpecular(vec4(0.5, 0, 0, 14));
+        dragon.setObjectAmb(vec3(0.1, 0.1, 0.1));
+        dragon.setObjectDiff(vec3(0.4, 0.4, 0.4));
+        dragon.setObjectSpecular(vec4(0.2, 0.2, 0.2, 14));
 
-        dragon.setLightIntensity(vec3(1, 1, 1));
-        dragon.setLightPosition(vec3(10, 10, 0));
+        dragon.setLightIntensity(vec3(1, 0, 0));
+        dragon.setLightPosition(vec3(10, 10, 10));
+        dragon.setLightDirection(vec3(0, 2, 0));
         dragon.setEyePosition(vec3(eyeX, eyeY, eyeZ));
 
-        dragon.getOBJ(id_cube);
+        dragon.getOBJ();
         //glCallList(id_cube);
     glPopMatrix();
 }
