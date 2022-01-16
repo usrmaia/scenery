@@ -1,5 +1,5 @@
 //g++ main.cpp -lGL -lglut -lGLU
-//g++ main.cpp cube.cpp -lopengl32 -lfreeglut -lglu32
+//g++ main.cpp -lopengl32 -lfreeglut -lglu32
 
 #include <GL/glut.h>
 #include <GL/gl.h>
@@ -10,13 +10,12 @@
 #include <unistd.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-#include "cube.h"
 #include "OBJLoader.h"
 
 using namespace glm;
 
-OBJ cube;
-OBJ cylinder;
+OBJ fertility, dragon;
+
 static unsigned id_cube;
 static unsigned id_cylinder;
 
@@ -24,7 +23,6 @@ GLdouble left, right, bottom, top, near_val, far_val;
 GLdouble    eyeX, eyeY, eyeZ, //posicao da camera
             centerX, centerY, centerZ, //para onde olha
             upX, upY, upZ; //topo da camera
-GLfloat increment;
 int angle_obj;
 
 void init();
@@ -62,12 +60,14 @@ void init(){
     glLineWidth(3);
     glEnable(GL_DEPTH_TEST);
 
-    glEnable(GL_LIGHTING);
+    /* glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
+    const GLfloat position[4] = {10, 10, 10, 1};
+    glLightfv (GL_LIGHT0, GL_POSITION, position); */
 
-    cube.load(id_cube, "Modelos3D/Modelos/fertility.obj");
-    cylinder.load(id_cylinder, "Modelos3D/Modelos/cilindro.obj");
+    fertility.load(id_cube, "Modelos3D/Modelos/fertility.obj");
+    dragon.load(id_cube, "Modelos3D/Modelos/dragon.obj");
 
     left = -1, right = 1, bottom = -1, top = 1, near_val = 2, far_val = 200;
     
@@ -75,7 +75,6 @@ void init(){
     centerX = 0, centerY = 0, centerZ = 0,
     upX = 0, upY = 1, upZ = 0;
 
-    increment = 0;
     angle_obj = 0;
 }
 
@@ -146,6 +145,9 @@ void keyboard_func(unsigned char key, int x, int y){
             eyeX += 0.5;
             //printf("eyeX = %f, eyeZ = %f\n", eyeX, eyeZ);
             break;
+        case 'r':
+            angle_obj += 10;
+            break;
     }
     glutPostRedisplay();
 }
@@ -213,26 +215,36 @@ void walls(){
 
 void objects(){
     glPushMatrix();
-        cube.setObjectAmb(vec3(0.3, 0, 0.3));
-        cube.setObjectDiff(vec3(0.7, 0, 0.7));
-        cube.setObjectSpecular(vec3(1, 0, 1));
-
-        cube.setLightPosition(vec3(10, 10, 10));
-        cube.setEyePosition(vec3(eyeX, eyeY, eyeZ));
-
         glTranslatef(3, 2, 0);
         glScalef(2, 2, 2);
         glRotated(angle_obj, 0, 1, 0);
-        
-        cube.getOBJ(id_cube);
+
+        fertility.setObjectAmb(vec3(0, 0, 0));
+        fertility.setObjectDiff(vec3(0.7, 0, 0.7));
+        fertility.setObjectSpecular(vec4(0.5, 0, 0.5, 14));
+
+        fertility.setLightIntensity(vec3(1, 1, 1));
+        fertility.setLightPosition(vec3(10, 10, 0));
+        fertility.setEyePosition(vec3(eyeX, eyeY, eyeZ));
+
+        fertility.getOBJ(id_cube);
         //glCallList(id_cube);
     glPopMatrix();
 
     glPushMatrix();
-        //glColor3f(0, 1, 1);
         glTranslatef(7.5, 2, 0);
         glScalef(2, 2, 2);
-        cylinder.getOBJ(id_cylinder);
-        //glCallList(id_cylinder);
+        glRotated(angle_obj, 0, 1, 0);
+
+        dragon.setObjectAmb(vec3(0, 0, 0));
+        dragon.setObjectDiff(vec3(0.5, 0, 0));
+        dragon.setObjectSpecular(vec4(0.5, 0, 0, 14));
+
+        dragon.setLightIntensity(vec3(1, 1, 1));
+        dragon.setLightPosition(vec3(10, 10, 0));
+        dragon.setEyePosition(vec3(eyeX, eyeY, eyeZ));
+
+        dragon.getOBJ(id_cube);
+        //glCallList(id_cube);
     glPopMatrix();
 }

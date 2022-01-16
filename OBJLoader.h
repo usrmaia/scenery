@@ -23,14 +23,19 @@ class OBJ{
     std::vector<vec3> vertexs;
     std::vector<vec3> normals;
     std::vector<face> faces;
-    vec3 light_position, amb, diff, specular, cam_position, eye_position;
-
+    vec3 light_position, amb, diff, cam_position, eye_position, light_intensity, light_direction;
+    vec4 specular;
     public:
         void setObjectAmb(vec3 amb);
         void setObjectDiff(vec3 diff);
-        void setObjectSpecular(vec3 specular);
-        void setLightPosition(vec3 position);
+        void setObjectSpecular(vec4 specular);
+
+        void setLightIntensity(vec3 light_intensity);
+        void setLightPosition(vec3 light_position);
+        void setLightDirection(vec3 light_direction);
         void setEyePosition(vec3 eye_position);
+
+        bool spotLight(vec3 light_position, vec3 light_direction, vec3 point);
 
         vec3 calculateLightAmb();
         vec3 calculateLightDiff(vec3 face, vec3 normal);
