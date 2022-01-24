@@ -1,5 +1,5 @@
 //g++ main.cpp -lGL -lglut -lGLU
-//g++ main.cpp -lopengl32 -lfreeglut -lglu32
+//g++ main.cpp OBJDisplay.cpp OBJLoader.cpp Texture.cpp -lopengl32 -lfreeglut -lglu32 
 
 #include <GL/glut.h>
 #include <GL/gl.h>
@@ -11,15 +11,25 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include "OBJLoader.h"
+#include "OBJDisplay.h"
+#include "Texture.h"
 
 using namespace glm;
 
-OBJ fertility, dragon;
+OBJLoader l_fertility;
+OBJLoader l_dragon;
 
-GLdouble left, right, bottom, top, near_val, far_val;
+OBJDisplay fertility;
+OBJDisplay dragon;
+
+Texture minion;
+unsigned int id_texture;
+
+GLdouble f_left, f_right, bottom, top, near_val, far_val;
 GLdouble    eyeX, eyeY, eyeZ, //posicao da camera
             centerX, centerY, centerZ, //para onde olha
             upX, upY, upZ; //topo da camera
+
 int angle_obj;
 
 void init();
@@ -56,6 +66,7 @@ void init(){
     glClearColor(0, 0, 0, 1);
     glLineWidth(3);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
 
     /* glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -63,10 +74,31 @@ void init(){
     const GLfloat position[4] = {10, 10, 10, 1};
     glLightfv (GL_LIGHT0, GL_POSITION, position); */
 
-    fertility.load("Modelos3D/Modelos/fertility.obj");
-    dragon.load("Modelos3D/Modelos/dragon.obj");
+    l_fertility.Loader("Modelos3D/Modelos/fertility.obj");
+    l_dragon.Loader("Modelos3D/Modelos/dragon.obj");
 
-    left = -1, right = 1, bottom = -1, top = 1, near_val = 2, far_val = 200;
+    minion.load("Textura/Geshin-Impact-Diluc.jpg");
+    id_texture = minion.get_id();
+
+    fertility.setVertexs_Texture(l_fertility, id_texture);
+        fertility.setObjectAmb(vec3(0, 0.3, 0.3));
+        fertility.setObjectDiff(vec3(0, 0.5, 0.5));
+        fertility.setObjectSpecular(vec4(0, 0.3, 0.3, 14));
+
+        fertility.setLightIntensity(vec3(1, 1, 1));
+        fertility.setLightPosition(vec3(10, 10, 10));
+        fertility.setLightDirection(vec3(3, 2, 0));
+
+    dragon.setVertexs_Texture(l_dragon, id_texture);
+        dragon.setObjectAmb(vec3(0.1, 0.1, 0.1));
+        dragon.setObjectDiff(vec3(0.4, 0.4, 0.4));
+        dragon.setObjectSpecular(vec4(0.2, 0.2, 0.2, 14));
+
+        dragon.setLightIntensity(vec3(1, 0, 0));
+        dragon.setLightPosition(vec3(10, 10, 10));
+        dragon.setLightDirection(vec3(0, 2, 0));
+
+    f_left = -1, f_right = 1, bottom = -1, top = 1, near_val = 2, far_val = 200;
     
     eyeX = 10, eyeY = 10, eyeZ = 10, 
     centerX = 0, centerY = 0, centerZ = 0,
@@ -80,7 +112,7 @@ void display_func(){
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glFrustum(left, right, bottom, top, near_val, far_val);
+    glFrustum(f_left, f_right, bottom, top, near_val, far_val);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -216,16 +248,8 @@ void objects(){
         glScalef(2, 2, 2);
         glRotated(angle_obj, 0, 1, 0);
 
-        fertility.setObjectAmb(vec3(0, 0.1, 0.1));
-        fertility.setObjectDiff(vec3(0, 0.4, 0.4));
-        fertility.setObjectSpecular(vec4(0, 0.5, 0.5, 14));
-
-        fertility.setLightIntensity(vec3(0, 0, 1));
-        fertility.setLightPosition(vec3(10, 10, 10));
-        fertility.setLightDirection(vec3(3, 2, 0));
         fertility.setEyePosition(vec3(eyeX, eyeY, eyeZ));
-
-        fertility.getOBJ();
+        fertility.getDisplayOBJ();
         //glCallList(id_cube);
     glPopMatrix();
 
@@ -234,16 +258,8 @@ void objects(){
         glScalef(2, 2, 2);
         glRotated(angle_obj, 0, 1, 0);
 
-        dragon.setObjectAmb(vec3(0.1, 0.1, 0.1));
-        dragon.setObjectDiff(vec3(0.4, 0.4, 0.4));
-        dragon.setObjectSpecular(vec4(0.2, 0.2, 0.2, 14));
-
-        dragon.setLightIntensity(vec3(1, 0, 0));
-        dragon.setLightPosition(vec3(10, 10, 10));
-        dragon.setLightDirection(vec3(0, 2, 0));
         dragon.setEyePosition(vec3(eyeX, eyeY, eyeZ));
-
-        dragon.getOBJ();
+        dragon.getDisplayOBJ();
         //glCallList(id_cube);
     glPopMatrix();
 }

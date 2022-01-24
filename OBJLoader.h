@@ -1,3 +1,6 @@
+#ifndef OBJLOADER_H_
+#define OBJLOADER_H_
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -6,6 +9,7 @@
 #include <windows.h>
 
 using namespace glm;
+using namespace std;
 
 struct face{
     int vertex[3];
@@ -20,33 +24,24 @@ struct face{
     }
 };
 
-class OBJ{
-    std::vector<vec3> vertexs;
-    std::vector<vec3> normals;
-    std::vector<face> faces;
-    vec3 light_position, amb, diff, cam_position, eye_position, light_intensity, light_direction;
-    vec4 specular;
+class OBJLoader{
+    private:
+        vector<vec3> vertexs;
+        vector<vec3> normals;
+        vector<face> faces;
+
+        float x_min, x_max, y_min, y_max;
+        
+        vec3 loadVertex(string s);
+        vec3 loadNormal(string s);
+        face loadFace(string s);
+        void calculate_x_y(float x, float y);
     public:
-        void setObjectAmb(vec3 amb);
-        void setObjectDiff(vec3 diff);
-        void setObjectSpecular(vec4 specular);
-
-        void setLightIntensity(vec3 light_intensity);
-        void setLightPosition(vec3 light_position);
-        void setLightDirection(vec3 light_direction);
-        void setEyePosition(vec3 eye_position);
-
-        bool spotLight(vec3 light_position, vec3 light_direction, vec3 point);
-
-        vec3 calculateLightAmb();
-        vec3 calculateLightDiff(vec3 face, vec3 normal);
-        vec3 calculateLightSpecular(vec3 face, vec3 normal);
-        vec3 PhongLighting(vec3 point, vec3 normal);
-
-        vec3 getVertex(std::string s);
-        vec3 getNormal(std::string s);
-        face getFace(std::string s);
-        void load(const char *file_path);
-
-        void getOBJ();
+        void Loader(const char *file_path);
+        vector<vec3> getVertexs();
+        vector<vec3> getNormals();
+        vector<face> getFaces();
+        vec4 getXY();
 };
+
+#endif
